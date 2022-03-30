@@ -1,0 +1,32 @@
+name: update
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/6 * * * *"
+
+  push:
+    branches: [master]
+    
+env:
+  URL: https://standards-oui.ieee.org/oui/oui.txt
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: download  files
+        run: |
+              wget -N $URL
+              
+      - name: Commit files
+        run: |
+              git config --local user.email "action@github.com"
+              git config --local user.name "GitHub Action"
+              git add .
+              git commit -m "update"
+              
+      - name: Push changes
+        uses: ad-m/github-push-action@master
